@@ -72,7 +72,6 @@
 
 本项目基于 [GNU General Public License v3.0 (GPL-3.0)](LICENSE) 开源。
 **重要提示**：根据 GPL 协议规定，任何引用或修改本代码并发布的项目，也必须同样以 GPL-3.0 协议开源，且必须保留原作者的版权声明。
-```
 ---
 
 <div align="center">
