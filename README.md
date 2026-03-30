@@ -38,7 +38,7 @@
 
 1. **克隆本仓库**
    ```bash
-   git clone https://github.com/你的用户名/你的仓库名.git
+   git clone https://github.com/SEDET666/EscapeTheBackrooms-Mod-Management-Tool.git
    ```
 
 2. **安装依赖库**
@@ -82,7 +82,7 @@
    在命令行执行：
    ```bash
    pip install pyinstaller
-   pyinstaller --noconsole --onefile --name "逃离后室工具箱" ttaoli.py
+   pyinstaller --noconsole --onefile --name "逃离后室工具箱" ETB.py
    ```
    * `--noconsole`：运行时不显示黑框框。
    * `--onefile`：打包成一个单独的 `.exe` 文件。
