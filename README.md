@@ -32,9 +32,9 @@ No need to configure a Python environment. Simply download the packaged executab
 
 ## 📸 UI Preview
 
-![Mod Manager](docs/mod_manager.png)
-![UE4SS Download](docs/ue4ss_download.png)
-![Settings Page](docs/settings.png)
+![Mod Manager](docs/mod_manager_en.png)
+![UE4SS Download](docs/ue4ss_download_en.png)
+![Settings Page](docs/settings_en.png)
 
 ---
 
