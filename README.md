@@ -49,7 +49,7 @@
 
 3. **运行程序**
    ```bash
-   python ETB.py
+   python EscapeTheBackroomsModManagementTool.py
    ```
 
 ## 📁 目录与逻辑说明
