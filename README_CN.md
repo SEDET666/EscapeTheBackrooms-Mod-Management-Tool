@@ -1,6 +1,6 @@
 <div align="center">
   
-[**English**](README_EN.md) | 简体中文
+[**English**](README.md) | 简体中文
 
 # 逃离后室 - 综合管理工具箱
 
