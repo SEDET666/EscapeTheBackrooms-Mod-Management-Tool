@@ -1,6 +1,6 @@
 <div align="center">
 
-English | [**简体中文**](README.md)
+English | [**简体中文**](README_CN.md)
 
 # Escape The Backrooms - Comprehensive Management ToolBox
 
