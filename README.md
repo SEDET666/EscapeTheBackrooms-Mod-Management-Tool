@@ -49,7 +49,7 @@
 
 3. **运行程序**
    ```bash
-   python ttaoli.py
+   python ETB.py
    ```
 
 ## 📁 目录与逻辑说明
