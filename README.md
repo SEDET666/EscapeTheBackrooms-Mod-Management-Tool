@@ -73,17 +73,10 @@
 本项目基于 [GNU General Public License v3.0 (GPL-3.0)](LICENSE) 开源。
 **重要提示**：根据 GPL 协议规定，任何引用或修改本代码并发布的项目，也必须同样以 GPL-3.0 协议开源，且必须保留原作者的版权声明。
 ```
+---
 
-### 💡 发布 Release 时的小建议：
+<div align="center">
 
-1. **替换占位符**：记得把 `https://github.com/你的用户名/你的仓库名/releases/latest` 换成你真实的仓库地址！
-2. **如何打包成免安装版给用户下载？**
-   对于这种 PySide6 写的带界面的工具，最推荐用 **`PyInstaller`** 打包。
-   在命令行执行：
-   ```bash
-   pip install pyinstaller
-   pyinstaller --noconsole --onefile --name "逃离后室工具箱" ETB.py
-   ```
-   * `--noconsole`：运行时不显示黑框框。
-   * `--onefile`：打包成一个单独的 `.exe` 文件。
-   打包完成后，去 `dist` 文件夹里把那个 `.exe` 提出来，压缩成一个 `.zip`，然后到 GitHub 的 Release 页面，把这个 zip 拖拽上去发布即可。
+**如果觉得这个项目有帮助，欢迎给个 ⭐ Star！**
+
+</div>
