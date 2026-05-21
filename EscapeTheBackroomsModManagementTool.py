@@ -5,7 +5,7 @@ from PySide6.QtCore import Qt, QThread, Signal
 from qfluentwidgets import (FluentWindow, NavigationItemPosition, TableWidget, PushButton, PrimaryPushButton, 
                             InfoBar, InfoBarPosition, FluentIcon, RoundMenu, Action, MenuAnimationType, 
                             TitleLabel, BodyLabel, StrongBodyLabel, CardWidget, LineEdit, ComboBox, 
-                            ListWidget, ProgressBar, Theme, setTheme, NavigationToolButton)
+                            ListWidget, ProgressBar, Theme, setTheme, NavigationToolButton, MaskDialogBase)
 import requests, urllib3
 from PySide6.QtGui import QColor
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -72,6 +72,41 @@ LANG_DATA = {
         "lua_msg_del_err": "删除失败: {err}",
         "lua_msg_drop_err": "仅支持拖入 .lua 文件！",
         "lua_msg_select": "请先在列表中选择一个模组！",
+
+        "nav_save": "存档管理",
+        "save_title": "游戏存档管理",
+        "save_btn_install": "导入存档",
+        "save_btn_refresh": "刷新列表",
+        "save_table_name": "存档名称",
+        "save_table_diff": "难度",
+        "save_ctx_diff": "修改难度",
+        "save_ctx_map": "修改地图",
+        "save_ctx_delete": "删除存档",
+        "save_diff_easy": "简单",
+        "save_diff_normal": "普通",
+        "save_diff_hard": "困难",
+        "save_diff_nightmare": "梦魇",
+        "save_msg_err_path": "找不到存档目录，请检查设置！",
+        "save_msg_no_save": "当前没有存档文件。",
+        "save_msg_import_ok": "存档 {name} 导入成功。",
+        "save_msg_import_err": "导入失败: {err}",
+        "save_msg_del_ok": "存档 {name} 已删除。",
+        "save_msg_del_err": "删除失败: {err}",
+        "save_msg_diff_ok": "难度已更改为 {diff}。",
+        "save_msg_diff_err": "修改难度失败(未找到特征码)。",
+        "save_msg_map_ok": "地图已修改为 {map}。",
+        "save_msg_map_err": "修改地图失败(未找到特征码)。",
+        "save_msg_drop_err": "仅支持拖入 .sav 文件！",
+        "save_msg_select": "请先在列表中选择一个存档！",
+        "save_map_title": "选择新地图",
+        "save_map_confirm": "确定",
+        "save_map_cancel": "取消",
+        "setting_save": "存档目录设置",
+        "setting_save_label": "存档路径:",
+        "setting_save_tip": "修改路径后，重启软件生效。默认为本地 AppData 路径。",
+        "save_msg_select": "请先在列表中选择一个存档！",
+        "save_table_map": "当前地图",
+        "save_map_fail": "提取失败",
         
         "setting_theme": "外观设置",
         "setting_theme_label": "主题模式：",
@@ -89,7 +124,7 @@ LANG_DATA = {
         "theme_light": "浅色模式",
         "theme_dark": "深色模式",
         
-        "about_title": "逃离后室 - 工具箱(Ver:1.1)",
+        "about_title": "逃离后室 - 工具箱(Ver:1.2)",
         "about_dev": "开发者：SEDET",
         "about_qq": "开发者QQ：248881284",
         "about_group": "交流群：",
@@ -155,7 +190,42 @@ LANG_DATA = {
         "lua_msg_del_err": "Delete failed: {err}",
         "lua_msg_drop_err": "Only .lua files are supported!",
         "lua_msg_select": "Please select a mod in the list first!",
-        
+
+        "nav_save": "Save Manager",
+        "save_title": "Game Save Manager",
+        "save_btn_install": "Import Save",
+        "save_btn_refresh": "Refresh List",
+        "save_table_name": "Save Name",
+        "save_table_diff": "Difficulty",
+        "save_ctx_diff": "Change Difficulty",
+        "save_ctx_map": "Change Map",
+        "save_ctx_delete": "Delete Save",
+        "save_diff_easy": "Easy",
+        "save_diff_normal": "Normal",
+        "save_diff_hard": "Hard",
+        "save_diff_nightmare": "Nightmare",
+        "save_msg_err_path": "Save directory not found, check settings!",
+        "save_msg_no_save": "No save files currently.",
+        "save_msg_import_ok": "Save {name} imported successfully.",
+        "save_msg_import_err": "Import failed: {err}",
+        "save_msg_del_ok": "Save {name} deleted.",
+        "save_msg_del_err": "Delete failed: {err}",
+        "save_msg_diff_ok": "Difficulty changed to {diff}.",
+        "save_msg_diff_err": "Failed to change difficulty (Pattern not found).",
+        "save_msg_map_ok": "Map changed to {map}.",
+        "save_msg_map_err": "Failed to change map (Pattern not found).",
+        "save_msg_drop_err": "Only .sav files are supported!",
+        "save_msg_select": "Please select a save in the list first!",
+        "save_map_title": "Select New Map",
+        "save_map_confirm": "Confirm",
+        "save_map_cancel": "Cancel",
+        "setting_save": "Save Directory Settings",
+        "setting_save_label": "Save Path:",
+        "setting_save_tip": "Changes take effect after restart. Default is local AppData path.",
+        "save_msg_select": "Please select a save in the list first!",
+        "save_table_map": "Current Map",
+        "save_map_fail": "Extract Failed",
+
         "setting_theme": "Appearance",
         "setting_theme_label": "Theme Mode:",
         "setting_path": "Game Path Settings",
@@ -172,7 +242,7 @@ LANG_DATA = {
         "theme_light": "Light Mode",
         "theme_dark": "Dark Mode",
         
-        "about_title": "Escape The Backrooms - ToolBox(Ver:1.1)",
+        "about_title": "Escape The Backrooms - ToolBox(Ver:1.2)",
         "about_dev": "Developer: SEDT",
         "about_qq": "Developer QQ: 248881284",
         "about_group": "QQ Group: ",
@@ -580,27 +650,43 @@ class SettingWidget(QWidget):
     def setup_ui(self):
         self.lay = QVBoxLayout(self); self.lay.setContentsMargins(36, 30, 36, 36); self.lay.setSpacing(20)
         
+        # 1. 主题卡片
         self.tc = CardWidget(self); tl = QVBoxLayout(self.tc); tl.setContentsMargins(20, 15, 20, 15)
         self.tt = StrongBodyLabel(tr("setting_theme")); tl.addWidget(self.tt)
         th = QHBoxLayout(); self.tl = BodyLabel(tr("setting_theme_label")); th.addWidget(self.tl)
         self.tcb = ComboBox(); self.tcb.addItems([tr("theme_system"), tr("theme_light"), tr("theme_dark")])
         self.tcb.setFixedWidth(150); self.tcb.currentIndexChanged.connect(self.chg_theme); th.addWidget(self.tcb); th.addStretch(); tl.addLayout(th)
 
+        # 2. 语言卡片
         self.lc = CardWidget(self); ll = QVBoxLayout(self.lc); ll.setContentsMargins(20, 15, 20, 15)
         self.lt = StrongBodyLabel(tr("setting_lang")); ll.addWidget(self.lt)
         lh = QHBoxLayout(); self.ll = BodyLabel(tr("setting_lang_label")); lh.addWidget(self.ll)
         self.lcb = ComboBox(); self.lcb.addItems(["中文", "English"]); self.lcb.setFixedWidth(150)
         self.lcb.currentIndexChanged.connect(self.chg_lang); lh.addWidget(self.lcb); lh.addStretch(); ll.addLayout(lh)
 
+        # 3. 游戏路径卡片
         self.pc = CardWidget(self); pl = QVBoxLayout(self.pc); pl.setContentsMargins(20, 15, 20, 15)
         self.pt = StrongBodyLabel(tr("setting_path")); pl.addWidget(self.pt)
         ph = QHBoxLayout(); self.pl = BodyLabel(tr("setting_path_label")); ph.addWidget(self.pl)
         self.pi = LineEdit(); self.pi.setReadOnly(True); ph.addWidget(self.pi)
         self.bb = PushButton(FluentIcon.FOLDER, tr("setting_browse")); self.bb.clicked.connect(self.sel_path); ph.addWidget(self.bb); pl.addLayout(ph)
-        self.tip = BodyLabel()
-        self.update_tip_text(); pl.addWidget(self.tip)
+        self.tip = BodyLabel(); pl.addWidget(self.tip)
 
-        self.lay.addWidget(self.tc); self.lay.addWidget(self.lc); self.lay.addWidget(self.pc); self.lay.addStretch()
+        # 4. 存档路径卡片
+        self.sc = CardWidget(self); sl = QVBoxLayout(self.sc); sl.setContentsMargins(20, 15, 20, 15)
+        self.st = StrongBodyLabel(tr("setting_save")); sl.addWidget(self.st)
+        sh = QHBoxLayout(); self.sl = BodyLabel(tr("setting_save_label")); sh.addWidget(self.sl)
+        self.si = LineEdit(); self.si.setReadOnly(True); sh.addWidget(self.si)
+        self.sb = PushButton(FluentIcon.FOLDER, tr("setting_browse")); self.sb.clicked.connect(self.sel_save_path); sh.addWidget(self.sb); sl.addLayout(sh)
+        self.stip = BodyLabel(); sl.addWidget(self.stip)
+
+        # 加入主布局
+        self.lay.addWidget(self.tc)
+        self.lay.addWidget(self.lc)
+        self.lay.addWidget(self.pc)
+        self.lay.addWidget(self.sc)
+        self.lay.addStretch()
+
     def update_language(self):
         self.tt.setText(tr("setting_theme")); self.tl.setText(tr("setting_theme_label"))
         self.tcb.blockSignals(True); self.tcb.clear(); self.tcb.addItems([tr("theme_system"), tr("theme_light"), tr("theme_dark")])
@@ -608,28 +694,311 @@ class SettingWidget(QWidget):
         self.lt.setText(tr("setting_lang")); self.ll.setText(tr("setting_lang_label"))
         self.pt.setText(tr("setting_path")); self.pl.setText(tr("setting_path_label")); self.bb.setText(tr("setting_browse"))
         self.update_tip_text()
+        self.st.setText(tr("setting_save")); self.sl.setText(tr("setting_save_label")); self.sb.setText(tr("setting_browse"))
+        self.update_save_tip_text()
+
     def update_tip_text(self):
-        """使用HTML设置灰色，完美保留Fluent原生漂亮字体"""
         self.tip.setText(f'<span style="color: gray;">{tr("setting_path_tip")}</span>')
+
+    def update_save_tip_text(self):
+        self.stip.setText(f'<span style="color: gray;">{tr("setting_save_tip")}</span>')
+
     def load_st(self):
         c = load_config(); self.tcb.setCurrentIndex(c.get("theme", 0)); self.lcb.setCurrentIndex(0 if c.get("lang", "en") == "zh" else 1)
         cp = get_game_path(); self.pi.setPlaceholderText(tr("msg_path_placeholder"))
         if cp: self.pi.setText(cp.replace('\\\\', '\\'))
+        
+        sp = c.get("save_path", os.path.join(os.environ.get('LOCALAPPDATA', '.'), "EscapeTheBackrooms", "Saved", "SaveGames"))
+        self.si.setText(sp.replace('\\\\', '\\'))
+
     def chg_theme(self, i):
         if i == 0: setTheme(Theme.AUTO)
         elif i == 1: setTheme(Theme.LIGHT)
         elif i == 2: setTheme(Theme.DARK)
         c = load_config(); c["theme"] = i; save_config(c)
+
     def chg_lang(self, i):
         c = load_config(); c["lang"] = "zh" if i == 0 else "en"; save_config(c)
         if self.parent_window: self.parent_window.update_all_ui_language()
+
     def sel_path(self):
         sd = QFileDialog.getExistingDirectory(self, tr("msg_path_select"))
         if not sd: return
         if not os.path.exists(os.path.join(sd, "Content")): return self.msg("Error", tr("msg_path_err"), True)
         cp = sd.replace('\\\\', '\\'); self.pi.setText(cp); c = load_config(); c["game_path"] = cp; save_config(c); self.msg("Success", tr("msg_path_ok"))
+
+    def sel_save_path(self):
+        sd = QFileDialog.getExistingDirectory(self, "Select Save Dir")
+        if not sd: return
+        cp = sd.replace('\\\\', '\\'); self.si.setText(cp); c = load_config(); c["save_path"] = cp; save_config(c)
+
     def msg(self, t, c, err=False):
         (InfoBar.error if err else InfoBar.success)(title=t, content=c, parent=self.parent_window, position=InfoBarPosition.TOP, duration=4000 if err else 3000)
+
+MAP_LIST = ["Lobby","Level0","TopFloor","MiddleFloor","GarageLevel2","BottomFloor","Level922","TheHub","Pipes","ElectricalStation","Office","Hotel","Floor3","BoilerRoom","LevelFun","Poolrooms","LevelRun","TheEnd","level94","AnimatedKingdom","LightsOut","Level974","OceanMap","OceanMap_Old","CaveLevel","Level05","Level9","AbandonedBase","Level10","level3999","Level07","Snackrooms","LevelDash","Level188_Expanded","LevelCheat","Poolrooms_Expanded","WaterPark_Level01_P","WaterPark_Level02_P","WaterPark_Level03_P","LevelFun_Expanded","Zone1_Modified","Zone2_Modified","Zone3_Baked","Zone4","Level52","TunnelLevel","Bunker","GraffitiLevel","Grassrooms_Expanded"]
+
+class MapSelectDialog(MaskDialogBase):
+    """纯正 Fluent 风格的全局遮罩弹窗"""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.result_map = None
+        self._setup_ui()
+
+    def _setup_ui(self):
+        # 设置中间卡片的大小
+        self.widget.setFixedWidth(400)
+        self.widget.setFixedHeight(500)
+        
+        lay = QVBoxLayout(self.widget)
+        lay.setContentsMargins(24, 20, 24, 20)
+        
+        self.title = StrongBodyLabel(tr("save_map_title"))
+        lay.addWidget(self.title)
+        
+        self.list_w = ListWidget()
+        self.list_w.addItems(MAP_LIST)
+        lay.addWidget(self.list_w)
+        
+        h = QHBoxLayout()
+        self.btn_ok = PrimaryPushButton(tr("save_map_confirm"))
+        self.btn_cancel = PushButton(tr("save_map_cancel"))
+        self.btn_ok.clicked.connect(self._on_accept)
+        self.btn_cancel.clicked.connect(self.reject) # 直接调用基类的 reject 关闭
+        h.addStretch()
+        h.addWidget(self.btn_ok)
+        h.addWidget(self.btn_cancel)
+        lay.addLayout(h)
+
+    def _on_accept(self):
+        if self.list_w.currentItem():
+            self.result_map = self.list_w.currentItem().text()
+        self.accept() # 调用基类的 accept 关闭弹窗
+
+class SaveManagerWidget(QWidget):
+    MAP_REGEX = re.compile(r'\b(' + '|'.join(re.escape(m) for m in MAP_LIST) + r')\b')
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setObjectName("SaveManagerInterface")
+        self.parent_window = parent
+        self.diff_map = {"Easy": 0, "Normal": 1, "Hard": 2, "Nightmare": 3}
+        self.reverse_diff = {0: "Easy", 1: "Normal", 2: "Hard", 3: "Nightmare"}
+        self.color_map = {"Easy": QColor(100, 200, 100), "Normal": QColor(100, 150, 255), "Hard": QColor(255, 150, 50), "Nightmare": QColor(255, 80, 80)}
+        self.setup_ui()
+        self.load_saves()
+        self.setAcceptDrops(True)
+
+    def setup_ui(self):
+        self.lay = QVBoxLayout(self)
+        self.lay.setContentsMargins(36, 20, 36, 20)
+        self.tit = StrongBodyLabel(tr("save_title")); self.lay.addWidget(self.tit)
+        h = QHBoxLayout()
+        self.bi = PrimaryPushButton(tr("save_btn_install")); self.bi.setFixedWidth(140)
+        self.br = PushButton(tr("save_btn_refresh")); self.br.setFixedWidth(120)
+        h.addWidget(self.bi); h.addWidget(self.br); h.addStretch(); self.lay.addLayout(h)
+        
+        self.tbl = TableWidget(self)
+        self.tbl.setColumnCount(3) # 改为3列
+        self.tbl.setHorizontalHeaderLabels([tr("save_table_name"), tr("save_table_map"), tr("save_table_diff")])
+        self.tbl.verticalHeader().hide()
+        self.tbl.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.tbl.horizontalHeader().setSectionResizeMode(1, QHeaderView.Interactive)
+        self.tbl.horizontalHeader().setSectionResizeMode(2, QHeaderView.Interactive)
+        self.tbl.setColumnWidth(1, 200) # 地图列宽一点
+        self.tbl.setColumnWidth(2, 120) # 难度列宽
+        self.tbl.setEditTriggers(TableWidget.NoEditTriggers); self.tbl.setAlternatingRowColors(True)
+        self.lay.addWidget(self.tbl)
+        
+        self.tbl.setContextMenuPolicy(Qt.CustomContextMenu); self.tbl.customContextMenuRequested.connect(self.ctx_menu)
+        self.bi.clicked.connect(self.install_save); self.br.clicked.connect(self.load_saves)
+
+    def update_language(self):
+        self.tit.setText(tr("save_title")); self.bi.setText(tr("save_btn_install")); self.br.setText(tr("save_btn_refresh"))
+        self.tbl.setHorizontalHeaderLabels([tr("save_table_name"), tr("save_table_map"), tr("save_table_diff")])
+        self.load_saves()
+
+    def get_dir(self):
+        p = load_config().get("save_path", os.path.join(os.environ.get('LOCALAPPDATA', '.'), "EscapeTheBackrooms", "Saved", "SaveGames"))
+        return p if os.path.exists(p) else None
+
+    def extract_map(self, filepath):
+        """利用已知地图列表正则精准提取，彻底告别瞎猜索引"""
+        try:
+            with open(filepath, 'rb') as f: data = f.read()
+            idx_cl = data.find(b'CurrentLevel')
+            if idx_cl == -1: return None
+            
+            # 截取 CurrentLevel 往后 1024 字节足够覆盖地图名了
+            search_area = data[idx_cl : idx_cl + 1024]
+            try:
+                text = search_area.decode('gbk', errors='ignore')
+            except:
+                text = search_area.decode('latin-1', errors='ignore')
+            
+            # 直接正则匹配！
+            match = self.MAP_REGEX.search(text)
+            return match.group(1) if match else None
+        except:
+            return None
+
+    def load_saves(self):
+        self.tbl.setRowCount(0); sd = self.get_dir()
+        if not sd: return self.msg("Error", tr("save_msg_err_path"), InfoBarPosition.TOP, True)
+        files = [f for f in os.listdir(sd) if f.startswith("MULTIPLAYER_") and f.endswith(".sav")]
+        if not files: return self.msg("Info", tr("save_msg_no_save"), InfoBarPosition.TOP)
+        
+        for f in files:
+            base = f[len("MULTIPLAYER_"):-len(".sav")]
+            diff_key = "Normal"; name = base
+            for k in ["_Nightmare", "_Hard", "_Normal", "_Easy"]:
+                if base.endswith(k):
+                    diff_key = k[1:]; name = base[:-len(k)]; break
+            
+            # 提取地图
+            filepath = os.path.join(sd, f)
+            map_name = self.extract_map(filepath)
+            if not map_name: map_name = tr("save_map_fail")
+            
+            r = self.tbl.rowCount(); self.tbl.insertRow(r)
+            # 第0列：名字
+            ni = QTableWidgetItem(name); ni.setTextAlignment(Qt.AlignLeft|Qt.AlignVCenter); ni.setData(Qt.UserRole, f); self.tbl.setItem(r, 0, ni)
+            # 第1列：地图
+            mi = QTableWidgetItem(map_name); mi.setTextAlignment(Qt.AlignLeft|Qt.AlignVCenter); 
+            if map_name == tr("save_map_fail"): mi.setForeground(QColor(255, 100, 100)) # 失败标红
+            self.tbl.setItem(r, 1, mi)
+            # 第2列：难度
+            di = QTableWidgetItem(tr(f"save_diff_{diff_key.lower()}")); di.setTextAlignment(Qt.AlignCenter)
+            di.setForeground(self.color_map.get(diff_key, QColor(255,255,255)))
+            di.setData(Qt.UserRole+1, diff_key); self.tbl.setItem(r, 2, di)
+
+    def install_save(self):
+        fs, _ = QFileDialog.getOpenFileNames(self, tr("save_btn_install"), "", "Save Files (*.sav)")
+        if fs: self.do_install(fs)
+
+    def do_install(self, fs):
+        sd = self.get_dir()
+        if not sd: return self.msg("Error", tr("save_msg_err_path"), InfoBarPosition.TOP, True)
+        for fp in fs:
+            try:
+                dest = os.path.join(sd, os.path.basename(fp))
+                # 如果文件已存在，解除只读属性并强制删除！
+                if os.path.exists(dest):
+                    os.chmod(dest, 0o777) 
+                    os.remove(dest)
+                shutil.copy2(fp, dest)
+                self.msg("Success", tr("save_msg_import_ok", name=os.path.basename(fp)), InfoBarPosition.TOP)
+            except Exception as e: self.msg("Error", tr("save_msg_import_err", err=str(e)), InfoBarPosition.TOP, True)
+        self.load_saves()
+
+    def dragEnterEvent(self, e): e.acceptProposedAction() if e.mimeData().hasUrls() else e.ignore()
+    def dropEvent(self, e):
+        fs = [u.toLocalFile() for u in e.mimeData().urls() if os.path.isfile(u.toLocalFile()) and u.toLocalFile().lower().endswith('.sav')]
+        self.do_install(fs) if fs else self.msg("Error", tr("save_msg_drop_err"), InfoBarPosition.TOP, True)
+
+    def get_selected_info(self):
+        it = self.tbl.currentItem()
+        if not it: self.msg("Info", tr("save_msg_select"), InfoBarPosition.TOP); return None, None, None
+        r = it.row(); 
+        filename = self.tbl.item(r, 0).data(Qt.UserRole)
+        # 修正：难度现在在第 2 列（索引为2），之前写死1导致取到了地图名！
+        diff_key = self.tbl.item(r, 2).data(Qt.UserRole+1) 
+        filepath = os.path.join(self.get_dir(), filename)
+        return filepath, filename, diff_key
+
+    def change_diff(self, new_diff_key):
+        filepath, filename, old_diff_key = self.get_selected_info()
+        if not filepath: return
+        target_val = self.diff_map.get(new_diff_key, 1)
+        
+        try:
+            # 1. 二进制修改文件内容
+            with open(filepath, 'rb') as f: data = bytearray(f.read())
+            pat = b'E_Difficulty::NewEnumerator'
+            idx = data.find(pat)
+            if idx == -1: return self.msg("Error", tr("save_msg_diff_err"), InfoBarPosition.TOP, True)
+            idx += len(pat)
+            while idx < len(data) and not chr(data[idx]).isdigit(): idx += 1
+            if idx == len(data): return self.msg("Error", tr("save_msg_diff_err"), InfoBarPosition.TOP, True)
+            end_idx = idx
+            while end_idx < len(data) and chr(end_idx).isdigit(): end_idx += 1
+            data[idx:end_idx] = str(target_val).encode('utf-8')
+            with open(filepath, 'wb') as f: f.write(data)
+            
+            # 2. 终极稳健的重命名逻辑（彻底杜绝后缀追加灾难）
+            base = filename[len("MULTIPLAYER_"):-len(".sav")]
+            parts = base.rsplit("_", 1) # 从右往左切一刀，分成 [名字, 难度]
+            if len(parts) == 2 and parts[1] in ["Easy", "Normal", "Hard", "Nightmare"]:
+                name_part = parts[0]
+                new_filename = f"MULTIPLAYER_{name_part}_{new_diff_key}.sav"
+            else:
+                # 兜底防御：万一名字里真的没有难度后缀，强制补上
+                new_filename = f"MULTIPLAYER_{base}_{new_diff_key}.sav"
+            
+            new_filepath = os.path.join(self.get_dir(), new_filename)
+            if os.path.exists(new_filepath) and new_filepath != filepath: os.remove(new_filepath)
+            os.rename(filepath, new_filepath)
+            
+            self.msg("Success", tr("save_msg_diff_ok", diff=tr(f"save_diff_{new_diff_key.lower()}")), InfoBarPosition.TOP)
+            self.load_saves()
+        except Exception as e: self.msg("Error", str(e), InfoBarPosition.TOP, True)
+
+    def change_map(self, filepath=None, _=None):
+        if not filepath:
+            filepath, _, _ = self.get_selected_info()
+        if not filepath: return
+        
+        dlg = MapSelectDialog(self.window())
+        dlg.exec_()
+        
+        new_map = str(dlg.result_map) if dlg.result_map is not None else None
+        if not new_map: return
+        
+        try:
+            with open(filepath, 'rb') as f: data = bytearray(f.read())
+            idx_cl = data.find(b'CurrentLevel')
+            if idx_cl == -1: return self.msg("Error", tr("save_msg_map_err"), InfoBarPosition.TOP, True)
+            
+            search_area = data[idx_cl : idx_cl + 1024]
+            try:
+                text = search_area.decode('gbk', errors='ignore')
+            except:
+                text = search_area.decode('latin-1', errors='ignore')
+            
+            match = self.MAP_REGEX.search(text)
+            if not match: return self.msg("Error", tr("save_msg_map_err"), InfoBarPosition.TOP, True)
+            
+            # 计算真实的二进制偏移量 (纯ASCII字符，字符串长度等于字节长度)
+            abs_start = idx_cl + match.start()
+            abs_end = idx_cl + match.end()
+            
+            # 精准切片替换，完美处理长度位移，不损坏任何非文本数据
+            new_data = data[:abs_start] + new_map.encode('ascii') + data[abs_end:]
+            
+            with open(filepath, 'wb') as f: f.write(new_data)
+            self.msg("Success", tr("save_msg_map_ok", map=new_map), InfoBarPosition.TOP)
+            self.load_saves()
+        except Exception as e: self.msg("Error", str(e), InfoBarPosition.TOP, True)
+
+    def delete_save(self):
+        filepath, filename, _ = self.get_selected_info()
+        if not filepath: return
+        try: os.remove(filepath); self.msg("Success", tr("save_msg_del_ok", name=filename), InfoBarPosition.TOP); self.load_saves()
+        except Exception as e: self.msg("Error", tr("save_msg_del_err", err=str(e)), InfoBarPosition.TOP, True)
+
+    def ctx_menu(self, p):
+        if not self.tbl.currentItem(): return
+        mu = RoundMenu(parent=self.tbl)
+        # 动态生成修改难度的子菜单
+        diff_menu = RoundMenu(tr("save_ctx_diff"), parent=mu)
+        for k in ["Easy", "Normal", "Hard", "Nightmare"]:
+            diff_menu.addAction(Action(tr(f"save_diff_{k.lower()}"), triggered=lambda checked, dk=k: self.change_diff(dk)))
+        mu.addMenu(diff_menu)
+        mu.addAction(Action(FluentIcon.EDIT, tr("save_ctx_map"), triggered=self.change_map))
+        mu.addSeparator()
+        mu.addAction(Action(FluentIcon.DELETE, tr("save_ctx_delete"), triggered=self.delete_save))
+        mu.exec(self.tbl.mapToGlobal(p), MenuAnimationType.DROP_DOWN)
+
+    def msg(self, t, c, p, err=False):
+        (InfoBar.error if err else InfoBar.success)(title=t, content=c, parent=self.parent_window, position=p, duration=5000 if err else 3000)
 
 class MainWindow(FluentWindow):
     def __init__(self):
@@ -639,11 +1008,13 @@ class MainWindow(FluentWindow):
         self.setMinimumSize(600, 400)
         self.mod_manager = ModManagerWidget(self)
         self.lua_manager = LuaModManagerWidget(self)
+        self.save_manager = SaveManagerWidget(self)       # 新增
         self.ue4ss_manager = UE4SSWidget(self)
         self.about_page = AboutWidget(self)
         self.setting_page = SettingWidget(self)
         self.addSubInterface(self.mod_manager, FluentIcon.FOLDER, tr("nav_mod"), NavigationItemPosition.SCROLL)
         self.addSubInterface(self.lua_manager, FluentIcon.CODE, tr("nav_lua"), NavigationItemPosition.SCROLL)
+        self.addSubInterface(self.save_manager, FluentIcon.SAVE, tr("nav_save"), NavigationItemPosition.SCROLL) # 新增
         self.addSubInterface(self.ue4ss_manager, FluentIcon.DOWNLOAD, tr("nav_ue4ss"), NavigationItemPosition.SCROLL)
         self.addSubInterface(self.about_page, FluentIcon.INFO, tr("nav_about"), NavigationItemPosition.SCROLL)
         self.addSubInterface(self.setting_page, FluentIcon.SETTING, tr("nav_setting"), NavigationItemPosition.BOTTOM)
@@ -652,12 +1023,13 @@ class MainWindow(FluentWindow):
     def update_all_ui_language(self):
         self.setWindowTitle(tr("app_title"))
         if hasattr(self, 'navigationInterface'):
-            for n, k in [("ModManagerInterface","nav_mod"),("LuaModInterface","nav_lua"),("UE4SSInterface","nav_ue4ss"),("AboutInterface","nav_about"),("SettingInterface","nav_setting")]:
+            for n, k in [("ModManagerInterface","nav_mod"),("LuaModInterface","nav_lua"),("UE4SSInterface","nav_ue4ss"),("AboutInterface","nav_about"),("SettingInterface","nav_setting"),("SaveManagerInterface","nav_save")]:
                 b = self.navigationInterface.findChild(NavigationToolButton, n)
                 if b: b.setText(tr(k))
         if hasattr(self, 'mod_manager'): self.mod_manager.update_language()
         if hasattr(self, 'lua_manager'): self.lua_manager.update_language()  # 新增
         if hasattr(self, 'ue4ss_manager'): self.ue4ss_manager.update_language()
+        if hasattr(self, 'save_manager'): self.save_manager.update_language()
         if hasattr(self, 'about_page'): self.about_page.update_language()
         if hasattr(self, 'setting_page'): self.setting_page.update_language()
 
